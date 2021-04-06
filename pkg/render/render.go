@@ -2,6 +2,8 @@ package render
 
 import (
 	"bytes"
+	"github.com/cknolla/go-webserver/pkg/config"
+	"github.com/cknolla/go-webserver/pkg/models"
 	"html/template"
 	"log"
 	"net/http"
@@ -12,18 +14,45 @@ var functions = template.FuncMap{
 
 }
 
-func RenderTemplate(w http.ResponseWriter, templateName string) {
-	templateCache, err := GetTemplateCache()
-	if err != nil {
-		log.Fatalln("Error getting Template Cache", err)
+var app *config.AppConfig
+
+func NewTemplates(appConfig *config.AppConfig) {
+	app = appConfig
+}
+
+func AddDefaultData(templateData *models.TemplateData) *models.TemplateData {
+	return templateData
+}
+
+func RenderTemplate(
+	w http.ResponseWriter,
+	templateName string,
+	data *models.TemplateData,
+	) {
+	var (
+		templateCache map[string]*template.Template
+		err error
+	)
+
+	if app.UseCache {
+		templateCache = app.TemplateCache
+	} else {
+		templateCache, err = GetTemplateCache()
+		if err != nil {
+			log.Fatalln("Error getting template cache", err)
+		}
 	}
+
 	tmpl, ok := templateCache[templateName]
 	if !ok {
 		log.Fatalln("Could not find template", templateName)
 	}
 
 	buffer := new(bytes.Buffer)
-	err = tmpl.Execute(buffer, nil)
+
+	data = AddDefaultData(data)
+
+	err = tmpl.Execute(buffer, data)
 	if err != nil {
 		log.Fatalln("Error executing template", err)
 	}

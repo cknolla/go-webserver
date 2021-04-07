@@ -41,7 +41,7 @@ func main() {
 	log.Println("Starting webserver on port", port)
 
 	serve := &http.Server {
-		Addr: port,
+		Addr:    port,
 		Handler: routes(&app),
 	}
 	err = serve.ListenAndServe()

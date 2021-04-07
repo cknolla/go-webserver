@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/cknolla/go-webserver/pkg/config"
 	"github.com/cknolla/go-webserver/pkg/models"
+	"github.com/justinas/nosurf"
 	"html/template"
 	"log"
 	"net/http"
@@ -20,12 +21,14 @@ func NewTemplates(appConfig *config.AppConfig) {
 	app = appConfig
 }
 
-func AddDefaultData(templateData *models.TemplateData) *models.TemplateData {
+func AddDefaultData(templateData *models.TemplateData, r *http.Request) *models.TemplateData {
+	templateData.CSRFToken = nosurf.Token(r)
 	return templateData
 }
 
 func RenderTemplate(
 	w http.ResponseWriter,
+	r *http.Request,
 	templateName string,
 	data *models.TemplateData,
 	) {
@@ -50,7 +53,7 @@ func RenderTemplate(
 
 	buffer := new(bytes.Buffer)
 
-	data = AddDefaultData(data)
+	data = AddDefaultData(data, r)
 
 	err = tmpl.Execute(buffer, data)
 	if err != nil {

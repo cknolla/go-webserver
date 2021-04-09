@@ -2,8 +2,8 @@ package render
 
 import (
 	"bytes"
-	"github.com/cknolla/go-webserver/pkg/config"
-	"github.com/cknolla/go-webserver/pkg/models"
+	"github.com/cknolla/go-webserver/internal/config"
+	"github.com/cknolla/go-webserver/internal/models"
 	"github.com/justinas/nosurf"
 	"html/template"
 	"log"

@@ -1,5 +1,7 @@
 package models
 
+import "github.com/cknolla/go-webserver/internal/forms"
+
 // TemplateData holds data sent from handlers to templates
 type TemplateData struct {
 	StringMap 	map[string]string
@@ -9,5 +11,6 @@ type TemplateData struct {
 	CSRFToken	string
 	Flash		string
 	Warning		string
-	error		string
+	Error		string
+	Form		*forms.Form
 }
